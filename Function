@@ -1,0 +1,44 @@
+import time
+import requests
+from notion.client import NotionClient
+
+
+#obter preços
+def get_flight_prices():
+    url = "https://www.rome2rio.com/pt/map/Porto/Tirana#r/Fly-to-Tirana/s/2"  #Substituir
+    response = requests.get(url)
+    data = response.json()
+    return data['prices']
+
+#filtrar preço abaixo de 100 euros
+def filter_flights(prices):
+    filtered_flights = []
+    for flight in prices:
+        if flight['origin'] == 'Porto' and flight['destination'] == 'Tirana' and flight['price'] < 100:
+            filtered_flights.append(flight)
+    return filtered_flights
+
+#enviar os alertas e vincular com o notion
+def send_alerts(flights):
+    # Configuração do Notion
+    notion_token = 'TOKEN_DO_NOTION'  #token de integração do Notion
+    notion_page_url = 'https://www.notion.so/Albania-490b4cb9867c47b9b64f7957189f428e?pvs=4'
+    client = NotionClient(token_v2=notion_token)
+    page = client.get_block(notion_page_url)
+
+    # Atualize as informações no Notion
+    for flight in flights:
+        flight_info = f"Origem: {flight['origin']}, Destino: {flight['destination']}, Preço: {flight['price']} euros"
+        page.children.add_new(TextBlock, title=flight_info)
+    
+    # Envie alertas
+    if flights:
+        print("Voos abaixo de 100 euros, vamo usar droga!")
+
+
+while True:
+    prices = get_flight_prices()
+    flights = filter_flights(prices)
+    send_alerts(flights)
+
+    time.sleep(3600)  #validação de 1 em 1hora
