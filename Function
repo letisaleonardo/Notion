@@ -1,7 +1,7 @@
 import time
 import requests
 from notion.client import NotionClient
-
+from notion.client import TextBlock
 
 #obter preços
 def get_flight_prices():
@@ -21,7 +21,7 @@ def filter_flights(prices):
 #enviar os alertas e vincular com o notion
 def send_alerts(flights):
     # Configuração do Notion
-    notion_token = 'TOKEN_DO_NOTION'  #token de integração do Notion
+    notion_token = 'secret_zfBvdEGPA6nSA9gGTehTcChPwi0o4cPiX9LFXNZn7PK'  #token de integração do Notion
     notion_page_url = 'https://www.notion.so/Albania-490b4cb9867c47b9b64f7957189f428e?pvs=4'
     client = NotionClient(token_v2=notion_token)
     page = client.get_block(notion_page_url)
